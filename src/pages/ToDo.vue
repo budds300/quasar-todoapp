@@ -66,10 +66,10 @@
       <q-item
         tag="label"
         class="bg-white"
-        v-ripple
+        clickable
         :key="task.id"
-        @dblclick="task.reminder=!task.reminder"
-        
+        @click.prevent="toggleReminder(task.id)"
+        v-ripple
         :class="{'done bg-blue-1':task.reminder}"
         v-for="(task) in tasks">
        
@@ -86,8 +86,47 @@
        
         side
         >
-        <q-btn flat round color="primary" icon="delete" @click.stop="deleteTask(task.id)" />
+        <q-btn
+        @click.capture.stop="deleteTask(task.id)" 
+          flat
+          round
+          color="primary"
+          icon="delete"
+          />
         
+        </q-item-section>
+        <q-item-section
+        side
+        >
+        <q-btn
+        @click.capture.stop="dialog=true" 
+          flat
+          round
+          color="primary"
+          icon="update"
+          class="q-pt-lg"
+          />
+          <div class="q-pa-md">
+  
+    <q-dialog v-model="dialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
+          <span class="q-ml-sm">You are currently not connected to any network.</span>
+        </q-card-section>
+
+        <q-card-section class="row items-center">
+          <q-toggle v-model="cancelEnabled" label="Cancel button enabled" />
+        </q-card-section>
+
+        <!-- Notice v-close-popup -->
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup="cancelEnabled" :disable="!cancelEnabled" />
+          <q-btn flat label="Turn on Wifi" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
         </q-item-section>
 
       </q-item>
@@ -98,6 +137,7 @@
 
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import axios from 'src/boot/axios'
 export default{
 
   name: 'ToDo',
@@ -105,7 +145,7 @@ export default{
     
     const text = ref(null)
     const day = ref(null)
-    const reminder = 0
+    const reminder = false
     const $q = useQuasar()
     return{
       text,
@@ -130,14 +170,14 @@ export default{
     },
 
     async deleteTask(id){
-      const res = await fetch(`http://localhost:8000/api/tasks/${id}`,{
+      const res = await fetch(`http://127.0.0.1:8000/api/tasks/${id}`,{
         method:'DELETE'
       })
       this.$q.dialog({
         dark: true,
         title: 'Confirm',
         message: 'Are you sure you want to delete this task?',
-        cancel: true,
+        cancel: false,
         persistent: true
       }).onOk(() => {
         res.status === 200 ? this.tasks= this.tasks.filter((task)=>task.id !==id) :alert('Error deletin task')
@@ -156,10 +196,10 @@ export default{
       const newTask={
         text : this.text,
         day : this.day,
-        reminder : this.reminder ===true?1:0,
+        reminder : this.reminder,
       }
       console.log(newTask)
-     const res = await fetch('http://localhost:8000/api/tasks/',{
+     const res = await fetch('http://127.0.0.1:8000/api/tasks/',{
       method:'POST',
       headers:{
         'Content-type':'application/json'
@@ -177,24 +217,21 @@ export default{
      })
             this.text=ref(null)
             this.day=ref(null)
-            this.reminder=0
+            this.reminder=false
     },
     async toggleReminder(id){
       const taskToToggle= await this.fetchTasks(id)
       const updateTask={...taskToToggle,reminder:!taskToToggle.reminder}
-      this.updatedTask={
-        text:this.text,
-        day:this.day,
-        reminder:this.reminder===false?0:1
-      }
-      const res =await fetch(`http://localhost:8000/api/tasks/${id}`,{
+      console.log(taskToToggle)
+      
+      await fetch(`http://127.0.0.1:8000/api/tasks/${id}`,{
         method:'PUT',
         headers:{
           "Content-type":"application/json"
         },
         body:JSON.stringify(updateTask)
-      })
-      const {data}= await res.json()
+      }).then(data => data.json())
+      
       this.tasks=this.tasks.map(task=>task.id===id?{...task,reminder:data.reminder}:task)
     }
    
