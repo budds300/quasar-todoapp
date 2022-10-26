@@ -1,11 +1,11 @@
 <template>
-  <q-page class="bg-white window-height window-width row justify-center items-center">
+  <q-page class="bg-white row justify-center ">
     <div class="column">
       <div class="row">
        
       </div>
-      <div class="row">
-        <q-card square bordered class="q-pa-lg shadow-1">
+      <div class="row column q-pt-xl">
+        <q-card square bordered class="q-mx-xl relative-center items-center shadow-1">
           <q-card-section>
             <q-form class="q-gutter-md">
               <q-input square filled clearable v-model="email" type="email" placeholder="Email" />
