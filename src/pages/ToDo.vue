@@ -68,7 +68,7 @@
         class="bg-white"
         v-ripple
         :key="task.id"
-        @dblclick="task.reminder=!task.reminder"
+        @click="task.reminder=!task.reminder"
         
         :class="{'done bg-blue-1':task.reminder}"
         v-for="(task) in tasks">
@@ -130,7 +130,7 @@ export default{
     },
 
     async deleteTask(id){
-      const res = await fetch(`http://localhost:8000/api/tasks/${id}`,{
+      const res = await fetch(`http://127.0.0.1:8000/api/tasks/${id}`,{
         method:'DELETE'
       })
       this.$q.dialog({
@@ -159,7 +159,7 @@ export default{
         reminder : this.reminder ===true?1:0,
       }
       console.log(newTask)
-     const res = await fetch('http://localhost:8000/api/tasks/',{
+     const res = await fetch('http://127.0.0.1:8000/api/tasks',{
       method:'POST',
       headers:{
         'Content-type':'application/json'
@@ -181,12 +181,14 @@ export default{
     },
     async toggleReminder(id){
       const taskToToggle= await this.fetchTasks(id)
+      console.log(taskToToggle.id)
       const updateTask={...taskToToggle,reminder:!taskToToggle.reminder}
       this.updatedTask={
         text:this.text,
         day:this.day,
         reminder:this.reminder===false?0:1
       }
+      console.log(updateTask)
       const res =await fetch(`http://localhost:8000/api/tasks/${id}`,{
         method:'PUT',
         headers:{
