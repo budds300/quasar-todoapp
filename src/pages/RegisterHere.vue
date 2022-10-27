@@ -18,7 +18,7 @@
             <q-btn unelevated color="light-blue-7" size="lg" class="full-width" label="Login" />
           </q-card-actions>
           <q-card-section class="text-center q-pa-none">
-            <a class="text-blue-9" href="/login">Not reigistered? Created an Account</a>
+            <a class="text-blue-9" href="/#/auth/login">Not reigistered? Created an Account</a>
           </q-card-section>
         </q-card>
       </div>
