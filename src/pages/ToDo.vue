@@ -125,9 +125,10 @@ export default{
   },
   methods:{
    async fetchTasks(){
-    const res = await axios.get("tasks").then(response=>response.data).then(res =>res.data)
-      return res
-    },
+     const res = await axios.get("tasks").then(response=>response.data).then(res =>res.data)
+     console.log(res)
+     return res
+  },
 
     async deleteTask(id){
       const res = await axios.delete(`tasks/${id}`)
@@ -157,27 +158,33 @@ export default{
         reminder : this.reminder ===true?1:0,
       }
 
-     const res = await axios.post('tasks/',newTask)
+
+     const res = await fetch('tasks',newTask)
       console.log(res)
      this.tasks=[...this.tasks,res]
 
-     this.$q.notify({
-       color: 'green-4',
-       textColor: 'white',
-       icon: 'cloud_done',
-       message: 'Task added'
-     })
+
+      this.$q.notify({
+        color: 'green-4',
+        textColor: 'white',
+        icon: 'cloud_done',
+        message: 'Task added'
+      })
             this.text=ref(null)
             this.day=ref(null)
             this.reminder=0
     },
     async toggleReminder(id){
       const taskToToggle= await this.fetchTasks(id)
-
-
-      const updateTask={...taskToToggle,reminder:taskToToggle.reminder==='0'?1:0}
+      console.log(taskToToggle.id)
+      const updateTask={...taskToToggle,reminder:!taskToToggle.reminder}
+      this.updatedTask={
+        text:this.text,
+        day:this.day,
+        reminder:this.reminder===false?0:1
+      }
       console.log(updateTask)
-      await fetch(`http://localhost:8000/api/tasks/${id}`,{
+      const res =await fetch(`http://localhost:8000/api/tasks/${id}`,{
         method:'PUT',
         headers:{
           "Content-type":"application/json"
