@@ -8,6 +8,16 @@ const routes = [
       { path: '/help', component: () => import('pages/HelpPage.vue') }
     ]
   },
+  {
+  path: '/auth',
+  component: () => import('layouts/BlankLayout.vue'),
+  children: [
+
+    { path: 'login', component: () => import('src/pages/LoginHere.vue') },
+    { path: 'register', component: () => import('src/pages/RegisterHere.vue') },
+  ],
+
+},
 
   // Always leave this as last one,
   // but you can also remove it
