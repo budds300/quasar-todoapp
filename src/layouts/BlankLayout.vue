@@ -7,7 +7,7 @@
         
 
         <q-toolbar-title class="text-center">
-          Login
+          
         </q-toolbar-title>
       </q-toolbar>
 

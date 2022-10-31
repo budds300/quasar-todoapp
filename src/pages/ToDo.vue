@@ -1,6 +1,6 @@
 <template>
   <q-page class="bg-grey-3 column">
-    
+
 
       <div class=" q-pa-sm bg-primary" >
 
@@ -15,7 +15,7 @@
     placeholder="Task *"
     bg-color="white"
     class="col"
-    no-reset-focus
+  no-reset-focus
     lazy-rules
     />
     <!-- :rules="[ val => val && val.length > 0 || 'Please type something']" -->
@@ -29,11 +29,11 @@
     bg-color="white"
     no-reset-focus
     lazy-rules
-    
+
   />
     <!-- :rules="[
       val => val !== null && val !== '' || 'Please Choose a date',
-      
+
     ]" -->
   <q-toggle v-model="reminder" :toggle-order="t?1:0" class=" q-px-sm" label="reminder" color="white" />
   <div>
@@ -54,7 +54,7 @@
         class="col"
         placeholder="Add task"
         dense>
-       
+
         <template v-slot:append>
           <q-btn round dense flat icon="add" @click="addTask" />
         </template>
@@ -72,7 +72,7 @@
         
         :class="{'done bg-blue-1':task.reminder}"
         v-for="(task) in tasks">
-       
+
         <q-item-section>
           <q-item-label>{{task.text}}</q-item-label>
           <q-item-label caption>
@@ -80,14 +80,14 @@
         </q-item-section>
         <q-item-section>
           <q-item-label >{{task.day}}</q-item-label>
-          
+
         </q-item-section>
         <q-item-section
-       
+
         side
         >
         <q-btn flat round color="primary" icon="delete" @click.stop="deleteTask(task.id)" />
-        
+
         </q-item-section>
 
       </q-item>
@@ -98,11 +98,12 @@
 
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import axios from 'axios'
 export default{
 
   name: 'ToDo',
   data(){
-    
+
     const text = ref(null)
     const day = ref(null)
     const reminder = 0
@@ -111,10 +112,10 @@ export default{
       text,
       day,
       reminder,
-      
 
-      
-      
+
+
+
       tasks:[]
     }
   },
@@ -124,13 +125,13 @@ export default{
   },
   methods:{
    async fetchTasks(){
-    const res = await fetch("http://127.0.0.1:8000/api/tasks")
-    const  {data}= await res.json()
-    return data
+    const res = await axios.get("tasks").then(data=>data.data).then(r =>r.data)
+
+    return res
     },
 
     async deleteTask(id){
-      const res = await fetch(`http://127.0.0.1:8000/api/tasks/${id}`,{
+      const res = await axios.delete(`http://localhost:8000/api/tasks/${id}`,{
         method:'DELETE'
       })
       this.$q.dialog({
@@ -143,7 +144,7 @@ export default{
         res.status === 200 ? this.tasks= this.tasks.filter((task)=>task.id !==id) :alert('Error deletin task')
         this.$q.notify('Task Deleted')
       })
-    
+
     },
     async addTask(e){
       e.preventDefault()
@@ -199,7 +200,7 @@ export default{
       const {data}= await res.json()
       this.tasks=this.tasks.map(task=>task.id===id?{...task,reminder:data.reminder}:task)
     }
-   
+
 
 
   }

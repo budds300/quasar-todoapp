@@ -1,33 +1,73 @@
-import { sign } from 'core-js/core/number';
 import { defineStore } from 'pinia';
-import auth from 'src/apis/auth';
+import api from '../boot/axios'
+
 export const useCounterStore = defineStore('counter', {
-  namespaced:true,
   state: () => ({
-   form : {
-    name:null,
-    email:null,
-    password:null,
-    token:null
-    }
+    
+      name: null,
+      email: null,
+      password: null,
+      confirm_password: null,
+    user: null
   }),
 
   getters: {
-    doubleCount (state) {
-      return state.counter * 2
-    }
+    getName:((state)=>state.name),
+    getEmail:((state)=>state.email)
+   
   },
 
   actions: {
-   async register ( ) {
-      auth.register().then(response)
-    }, 
-    async signIn(_,credentials){
-      let res=await auth.signup(credentials)
-      console.log(res.data)
+    async getSanctumCookie(){
+      try{
+        await api.get('sanctum/csrf-cookie')
+      }
+      catch (error){
+        if (error) throw error
+      }
+    },
+    async login(email,password){
+      try{
+       await api.post('auth/signin',{email,password})}
+      catch (error){
+        if (error) throw error
+      }
+      
+    },
+    async register(name,email,password,confirm_password){
+      try{
+        api.post('auth/login',{name,email,password,confirm_password})
+
+      }
+      catch (error){
+        if (error) throw error
+      }
+    
+    },
+    async logout(){
+      try{
+        await api.post('auth/logout')
+        this.clearUser()
+      }
+        catch (error){
+          if (error) throw error
+        }
+    },
+    setUser (payload) {
+      
+      if (payload.first_name) this.firstName = payload.first_name
+      if (payload.last_name) this.lastName = payload.last_name
+      if (payload.email) this.email = payload.email
+    },
+
+    clearUser () {
+    
+      this.first_name = null
+      this.last_name = null
+      this.email = null
     }
   },
-  mutations:{
-
-  }
+  persist: true
+  
+  
 })
