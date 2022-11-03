@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import {useCounterStore} from './showcase'
 
 /*
- * If not building with SSR mode, you can
+* If not building with SSR mode, you can
  * directly export the Store instantiation;
  *
  * The function below can be async too; either use
@@ -12,9 +12,11 @@ import {useCounterStore} from './showcase'
  */
 
 export default store((/* { ssrContext } */) => {
-  const pinia = createPinia({
-    modules:{useCounterStore}
-  })
+  const pinia = createPinia(
+  //   {
+  //   modules:{useCounterStore}
+  // }
+  )
 
   // You can add Pinia plugins here
   // pinia.use(SomePiniaPlugin)

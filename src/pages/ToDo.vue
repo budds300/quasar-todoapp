@@ -103,11 +103,11 @@ export default{
 
   name: 'ToDo',
   data(){
-
+    
     const text = ref(null)
     const day = ref(null)
-    const reminder = 0
     const $q = useQuasar()
+    const reminder = 0
     return{
       text,
       day,

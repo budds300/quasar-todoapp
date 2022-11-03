@@ -12,7 +12,8 @@ import routes from './routes'
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
-
+// const api = axios.create({ baseURL: 'http://127.0.0.1:8000/' })
+// api.defaults.withCredentials =true
 // axios.defaults.baseURL='http://127.0.0.1:8000/api'
 export default route(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER

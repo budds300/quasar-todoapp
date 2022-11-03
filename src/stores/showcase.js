@@ -1,73 +1,95 @@
-import { defineStore } from 'pinia';
-import api from '../boot/axios'
+import { defineStore } from "pinia";
+import { useQuasar } from "quasar";
+import { useRouter } from "vue-router";
+import { api } from "../boot/axios"
 
-export const useCounterStore = defineStore('counter', {
+
+
+const router = useRouter();
+const $q = useQuasar();
+
+export const useCounterStore = defineStore("counter", {
   state: () => ({
-    
-      name: null,
-      email: null,
-      password: null,
-      confirm_password: null,
-    user: null
+    name: null,
+    email: null,
+    password: null,
+    password_confirmation: null,
+    user: null,
+    token: localStorage.getItem("token") || 0,
   }),
 
   getters: {
-    getName:((state)=>state.name),
-    getEmail:((state)=>state.email)
-   
+    getName: (state) => state.name,
+    getEmail: (state) => state.email,
+    getToken: (state) => state.token,
   },
 
   actions: {
-    async getSanctumCookie(){
-      try{
-        await api.get('sanctum/csrf-cookie')
-      }
-      catch (error){
-        if (error) throw error
+    setToken() {
+      this.token = token;
+      localStorage.setItem("token", token);
+    },
+    removeToken() {
+      this.token = 0;
+      localStorage.removeItem("token");
+    },
+    async getSanctumCookie() {
+      try {
+        await api.get("csrf-cookie");
+      } catch (error) {
+        if (error) throw error;
       }
     },
-    async login(email,password){
-      try{
-       await api.post('auth/signin',{email,password})}
-      catch (error){
-        if (error) throw error
+    async login(email, password) {
+      try {
+        await api.post("auth/login", { email: email, password: password })
+      } catch (error) {
+        if (error) throw error;
       }
-      
     },
-    async register(name,email,password,confirm_password){
-      try{
-        api.post('auth/login',{name,email,password,confirm_password})
+    async fetchUser() {
+      try {
+        return await api
+          .get("user")
+          .then((response) => console.log(response.data));
+      } catch (error) {
+        if (error) throw error;
+      }
+    },
+    async registerUser(name, email, password, password_confirmation) {
+      try {
+        const task = api
+          .post("auth/register", {
+            name,
+            email,
+            password,
+            password_confirmation,
+          })
+          .then((res) => console.log(res.message));
+        console.log(task);
+      } catch (error) {
+        if (error) throw error;
+      }
+    },
 
+    async logout() {
+      try {
+        await api.post("auth/logout");
+        this.clearUser();
+      } catch (error) {
+        if (error) throw error;
       }
-      catch (error){
-        if (error) throw error
-      }
-    
     },
-    async logout(){
-      try{
-        await api.post('auth/logout')
-        this.clearUser()
-      }
-        catch (error){
-          if (error) throw error
-        }
-    },
-    setUser (payload) {
-      
-      if (payload.first_name) this.firstName = payload.first_name
-      if (payload.last_name) this.lastName = payload.last_name
-      if (payload.email) this.email = payload.email
+    setUser(payload) {
+      console.log(payload.email);
+      if (payload.name) this.name = payload.name;
+      if (payload.email) this.email = payload.email;
     },
 
-    clearUser () {
-    
-      this.first_name = null
-      this.last_name = null
-      this.email = null
-    }
+    clearUser() {
+      this.name = null;
+      this.email = null;
+    },
   },
-  persist: true
-  
-  
-})
+  persist: true,
+});

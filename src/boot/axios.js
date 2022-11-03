@@ -1,5 +1,9 @@
-import { boot } from 'quasar/wrappers'
-import axios from 'axios'
+import Axios from "axios";
+import { boot } from "quasar/wrappers";
+import { Cookies } from "quasar";
+const axios = Axios.create({
+ baseUrl: "https://next.mysite.net"
+});
 axios.defaults.withCredentials =true
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -7,13 +11,14 @@ axios.defaults.withCredentials =true
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'http://127.0.0.1:8000/' })
+const api = axios.create({ baseURL: 'http://localhost:8000/api' })
 api.defaults.withCredentials =true
+
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
-  app.config.globalProperties.$axios = axios
+  app.config.globalProperties.$api = api
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
 

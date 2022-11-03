@@ -8,10 +8,11 @@
         <q-card square bordered class="q-mx-xl relative-center items-center shadow-1">
           <q-card-section>
             <q-form class="q-gutter-md" @submit="onSubmit">
+              <input type="hidden" name="_token" v-bind:value="csrf">
               <q-input square filled clearable v-model="name"  stack-lable type="name" placeholder="Name" />
               <q-input square filled clearable v-model="email"  stack-lable type="email" placeholder="Email" />
               <q-input square filled clearable v-model="password"  stack-lable type="password" placeholder="Password" />
-              <q-input square filled clearable v-model="confirm_password" stack-lable  type="password" placeholder="Confirm Password" />
+              <q-input square filled clearable v-model="password_confirmation" stack-lable  type="password" placeholder="Confirm Password" />
               <q-btn unelevated color="light-blue-7" size="lg" type="submit" class="full-width" label="Register" />
             </q-form>
             </q-card-section>
@@ -27,27 +28,29 @@
 </template>
 
 <script>
-import { mapActions } from 'pinia'
 
-import { reactive, ref } from 'vue'
+
+import {  ref } from 'vue'
 import { useQuasar } from 'quasar'
-import useCounterStore from '../stores/showcase'
-import { useRouter } from 'vue-router'
+import {useCounterStore} from '../stores/showcase'
+// import { useRouter } from 'vue-router'
 
-const router = useRouter()
+// const router = useRouter()
 const $q = useQuasar()
 
-const userStore= useCounterStore
+const userStore= useCounterStore()
 
 export default {
   // name: 'Login'/,
   
   data () {
     return {
+      // csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
        name :ref(''),  
-        email: ref(''),
-       password: ref(''),
-       confirm_password: ref(''),
+        email:ref(''),
+       password:ref(''),
+       password_confirmation:ref(''),
+
    
       
     }
@@ -56,24 +59,19 @@ export default {
     // ...mapActions(['signUp']),
      async onSubmit(){
       try {
-    // Get the tokens/cookies
-    await userStore.getSanctumCookie()
+    
     // Register User
-    await userStore.register(
-      this.firstName ,
-      this.lastName ,
-      this.email ,
-      this.password ,
-      this.confirm_password
-    )
+    await userStore.registerUser (this.name,this.email,this.password,this.password_confirmation)
+   
    
   } catch (error) {
-    $q.loading.hide()
-    $q.dialog({
-      title: 'Registration failed',
-      message: 'Your registration was unsuccessful. Please make sure that your details are correct.',
-      persistent: true
-    })
+    if (error) throw error
+    // $q.loading.hide()
+    // $q.dialog({
+    //   title: 'Registration failed',
+    //   message: 'Your registration was unsuccessful. Please make sure that your details are correct.',
+    //   persistent: true
+    // })
   }
       
       
