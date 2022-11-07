@@ -42,7 +42,12 @@ export const useCounterStore = defineStore("counter", {
     },
     async login(email, password) {
       try {
-        await api.post("auth/login", { email: email, password: password })
+        await api.post("auth/login", { email: email, password: password }).then(res =>{
+          if(res.status == 200){
+            localStorage.setItem("auth_token", res.data.access_token)
+            
+          }
+        })
       } catch (error) {
         if (error) throw error;
       }
