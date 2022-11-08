@@ -25,9 +25,9 @@ export const useCounterStore = defineStore("counter", {
   },
 
   actions: {
-    setToken() {
+    setToken(payload) {
+      const localstore =localStorage.setItem("token", payload.data.access_token);
       this.token = token;
-      localStorage.setItem("token", token);
     },
     removeToken() {
       this.token = 0;
@@ -44,8 +44,8 @@ export const useCounterStore = defineStore("counter", {
       try {
         await api.post("auth/login", { email: email, password: password }).then(res =>{
           if(res.status == 200){
-            localStorage.setItem("auth_token", res.data.access_token)
-            
+            localStorage.setItem("token", res.data.access_token);
+
           }
         })
       } catch (error) {
@@ -81,6 +81,16 @@ export const useCounterStore = defineStore("counter", {
       try {
         await api.post("auth/logout");
         this.clearUser();
+      } catch (error) {
+        if (error) throw error;
+      }
+    },
+    async logOut() {
+      try {
+        await api.post("auth/logout").then(res =>{
+
+        })
+
       } catch (error) {
         if (error) throw error;
       }
