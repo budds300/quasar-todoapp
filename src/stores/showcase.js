@@ -29,9 +29,8 @@ export const useCounterStore = defineStore("counter", {
       const localstore =localStorage.setItem("token", payload.data.access_token);
       this.token = token;
     },
-    removeToken() {
-      this.token = 0;
-      localStorage.removeItem("token");
+  removeToken() {
+     return localStorage.removeItem('token');
     },
     async getSanctumCookie() {
       try {

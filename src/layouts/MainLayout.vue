@@ -10,7 +10,6 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-
       </q-toolbar>
 
       <div class="q-px-md q-pt-xl q-mb-md">
@@ -20,8 +19,6 @@
       </div>
       <q-img class="header-img absolute-top" src="../statics/background.jpg" />
     </q-header>
-
-
     <q-drawer
         v-model="leftDrawerOpen"
         show-if-above
@@ -43,23 +40,32 @@
                 Todo
               </q-item-section>
             </q-item>
-
             <q-item
+            clickable
+            v-ripple
+            to="/help"
+            exact>
+            <q-item-section avatar>
+              <q-icon name="help" />
+            </q-item-section>
 
-              clickable
-              v-ripple
-              to="/help"
+            <q-item-section>
+              Help
+            </q-item-section>
+          </q-item>
+          <q-item
+          clickable
+          v-ripple
+          @click="logOut"
               exact>
               <q-item-section avatar>
-                <q-icon name="help" />
+                <q-icon name="logout" />
               </q-item-section>
 
               <q-item-section>
-                Help
+                Logout
               </q-item-section>
             </q-item>
-
-
           </q-list>
         </q-scroll-area>
 
@@ -86,8 +92,11 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import {date} from 'quasar'
+import {useCounterStore} from '../stores/showcase'
+import {useRouter} from "vue-router";
 // import EssentialLink from 'components/EssentialLink.vue'
-
+const userStore = useCounterStore()
+const $router = useRouter();
 const linksList = [
   {
     title: 'Docs',
@@ -154,6 +163,21 @@ export default defineComponent({
     todaysDate(){
       let timeStamp=Date.now()
       return date.formatDate(timeStamp,'dddd D MMMM')
+    }
+  },
+  methods:{
+     async logOut(){
+       try{
+         await userStore.removeToken()
+        this.$router.push('/auth/login')
+      }
+      catch(error){
+      this.$q.dialog({
+      title: 'Logout failed',
+      message: 'Your logout was unsuccessful. Please make sure that your details are correct.',
+      persistent: true
+    })
+  }
     }
   }
 
