@@ -38,7 +38,7 @@ const password = ref('')
 const userStore = useCounterStore()
 export default {
   // name: 'Login'/,
-  
+
   data () {
     const $router = useRouter()
     const $q = useQuasar()
@@ -47,16 +47,18 @@ export default {
       password: ''
     }
   },
-   
+
    methods:{
     async submit(){
       try {
     // Get the tokens/cookies
-   
+
     await userStore.getSanctumCookie()
     // Login user
     await userStore.login(this.email, this.password)
-
+    const user = await userStore.fetchUser()
+    console.log(user)
+    userStore.setUser(user.data)
     this.$router.push('/')
       }
       catch(error){
@@ -66,7 +68,7 @@ export default {
       persistent: true
     })
   }
-      
+
     // .then (error => { console.log(error)
           //   if (res.data.status === "Error") {
           //     $q.notify({
@@ -83,16 +85,16 @@ export default {
           //     message: error.response.data.message,
           //   })
             // )
-            
-       
+
+
     // get user
 
     // const user = await userStore.fetchUser()
     // console.log(user)
     //set data in local storeage
       // userStore.setUser(user.data)
-  
-    
+
+
   }
 }
 }

@@ -1,13 +1,12 @@
-import { useCounterStore } from "src/stores/showcase";
 import { createRouter, createWebHashHistory } from "vue-router";
-
-// import { useUserStore } from '../stores/user-store'
+import { useCounterStore } from "src/stores/showcase";
 
 const routes = [
   {
     path: "/",
     beforeEnter: (to, from,next) => {
-      !localStorage.getItem('token')?next('/auth/login'):next()
+      const userStore = useCounterStore()
+      !userStore.email ?next('/auth/login'):next()
     },
     component: () => import("layouts/MainLayout.vue"),
     children: [
@@ -31,9 +30,11 @@ const routes = [
   },
   {
     path: "/auth",
-    beforeEnter:(to,from,next)=>{
-      !localStorage.getItem('token')?next():next('/')
-    },
+
+    // beforeEnter:(to,from,next)=>{
+    //   // let userStore = useCounterStore()
+    //   // !userStore.email ? next('/auth/login') : next('/')
+    // },
     component: () => import("layouts/BlankLayout.vue"),
     children: [
       {

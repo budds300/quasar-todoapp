@@ -54,11 +54,9 @@ export const useCounterStore = defineStore("counter", {
     },
     async fetchUser() {
       try {
-        return await api
-          .get("user")
-          .then((response) => console.log(response.data));
+        return await api.get('/user')
       } catch (error) {
-        if (error) throw error;
+        if (error) throw error
       }
     },
     async registerUser(name, email, password, password_confirmation) {

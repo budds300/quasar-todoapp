@@ -11,7 +11,7 @@ import { boot } from "quasar/wrappers";
 const api = axios.create({ baseURL: 'http://localhost:8000/api' })
 api.defaults.withCredentials =true
 api.interceptors.request.use(function (config){
-  const token = localStorage.getItem('auth_token');
+  // const token = localStorage.getItem('auth_token');
   config.headers.Authorization = token ? `Bearer ${token}` : '';
   return config;
 })
