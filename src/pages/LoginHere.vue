@@ -105,3 +105,4 @@ export default {
   width: 360px;
 }
 </style>
+  

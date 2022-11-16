@@ -16,12 +16,14 @@ export const useCounterStore = defineStore("counter", {
     password_confirmation: null,
     user: null,
     token: localStorage.getItem("token") || 0,
+    tasks:[]
   }),
 
   getters: {
     getName: (state) => state.name,
     getEmail: (state) => state.email,
     getToken: (state) => state.token,
+    getTask: (state) => state.tasks,
   },
 
   actions: {
@@ -41,13 +43,10 @@ export const useCounterStore = defineStore("counter", {
       }
     },
     async login(email, password) {
+      console.log("clicked")
       try {
-        await api.post("auth/login", { email: email, password: password }).then(res =>{
-          if(res.status == 200){
-            localStorage.setItem("token", res.data.access_token);
+        await api.post("auth/login", { email: email, password: password })
 
-          }
-        })
       } catch (error) {
         if (error) throw error;
       }
@@ -94,15 +93,40 @@ export const useCounterStore = defineStore("counter", {
       }
     },
     setUser(payload) {
-      console.log(payload.email);
-      if (payload.name) this.name = payload.name;
-      if (payload.email) this.email = payload.email;
+      if (payload.data.email) this.email = payload.data.email;
+      console.log( payload.data);
     },
+
 
     clearUser() {
       this.name = null;
       this.email = null;
     },
+    async fetchTasks(){
+       await api.get("tasks").then(data=>data.data).then(r =>(r.data))
+
+      },
+      async addTask(text,day,reminder){
+
+        if(!text){
+          alert('Kindly fill in some details')
+        }
+        if(!day){
+          alert('Kindly fill in some details')
+        }
+        const newTask={
+          text : text,
+          day : day,
+          reminder :reminder ===true?1:0,
+        }
+        console.log(newTask)
+       const data =await api.post('tasks',newTask)
+
+       this.tasks=[...this.tasks,data]
+       this.text=ref(null)
+       this.day=ref(null)
+       this.reminder=0
+      },
   },
   persist: true,
 });

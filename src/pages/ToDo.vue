@@ -69,7 +69,7 @@
         v-ripple
         :key="task.id"
         @click="task.reminder=!task.reminder"
-        
+
         :class="{'done bg-blue-1':task.reminder}"
         v-for="(task) in tasks">
 
@@ -98,12 +98,13 @@
 
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
-import axios from 'axios'
+import { useCounterStore } from 'src/stores/showcase'
+
+const userStore = useCounterStore()
 export default{
 
   name: 'ToDo',
   data(){
-    
     const text = ref(null)
     const day = ref(null)
     const $q = useQuasar()
@@ -125,9 +126,7 @@ export default{
   },
   methods:{
    async fetchTasks(){
-    const res = await axios.get("tasks").then(data=>data.data).then(r =>r.data)
-
-    return res
+     await userStore.fetchTasks()
     },
 
     async deleteTask(id){
@@ -146,39 +145,19 @@ export default{
       })
 
     },
-    async addTask(e){
-      e.preventDefault()
-      if(!this.text){
-        alert('Kindly fill in some details')
+    async addTask(){
+      try{
+        await userStore.addTask(this.text,this.day,this.reminder)
       }
-      if(!this.day){
-        alert('Kindly fill in some details')
+      catch (error){
+        this.$q.notify({
+         color: 'green-4',
+         textColor: 'white',
+         icon: 'cloud_done',
+         message: 'Task added'
+       })
+             
       }
-      const newTask={
-        text : this.text,
-        day : this.day,
-        reminder : this.reminder ===true?1:0,
-      }
-      console.log(newTask)
-     const res = await fetch('http://127.0.0.1:8000/api/tasks',{
-      method:'POST',
-      headers:{
-        'Content-type':'application/json'
-      },
-      body:JSON.stringify(newTask)
-     })
-     const {data}= await res.json()
-     this.tasks=[...this.tasks,data]
-
-     this.$q.notify({
-       color: 'green-4',
-       textColor: 'white',
-       icon: 'cloud_done',
-       message: 'Task added'
-     })
-            this.text=ref(null)
-            this.day=ref(null)
-            this.reminder=0
     },
     async toggleReminder(id){
       const taskToToggle= await this.fetchTasks(id)

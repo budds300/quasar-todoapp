@@ -5,8 +5,8 @@ const routes = [
   {
     path: "/",
     beforeEnter: (to, from,next) => {
-      const userStore = useCounterStore()
-      !userStore.email ?next('/auth/login'):next()
+      let userStore = useCounterStore()
+      userStore.email ?next():next('/auth/login')
     },
     component: () => import("layouts/MainLayout.vue"),
     children: [
@@ -31,10 +31,10 @@ const routes = [
   {
     path: "/auth",
 
-    // beforeEnter:(to,from,next)=>{
-    //   // let userStore = useCounterStore()
-    //   // !userStore.email ? next('/auth/login') : next('/')
-    // },
+    beforeEnter:(to,from,next)=>{
+      let userStore = useCounterStore()
+      !userStore.email ? next() : next('/')
+    },
     component: () => import("layouts/BlankLayout.vue"),
     children: [
       {
