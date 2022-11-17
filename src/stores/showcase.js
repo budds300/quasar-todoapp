@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useQuasar } from "quasar";
+import { store } from "quasar/wrappers";
 import { useRouter } from "vue-router";
 import { api } from "../boot/axios"
 
@@ -10,6 +11,7 @@ const $q = useQuasar();
 
 export const useCounterStore = defineStore("counter", {
   state: () => ({
+    id: null,
     name: null,
     email: null,
     password: null,
@@ -20,6 +22,7 @@ export const useCounterStore = defineStore("counter", {
   }),
 
   getters: {
+    getId: (state) => state.id,
     getName: (state) => state.name,
     getEmail: (state) => state.email,
     getToken: (state) => state.token,
@@ -103,29 +106,27 @@ export const useCounterStore = defineStore("counter", {
       this.email = null;
     },
     async fetchTasks(){
-       await api.get("tasks").then(data=>data.data).then(r =>(r.data))
+     const currentTasks= await api.get("tasks").then(res=>res.data.data)
+     this.tasks = currentTasks
+      },
+      async addTask(task){
+        this.tasks=[task,...this.tasks]
+        await api.post('tasks',task)
+
+        }
+      ,
+      async deleteTask(id) {
+         await api.delete(`tasks/${id}`);
 
       },
-      async addTask(text,day,reminder){
 
-        if(!text){
-          alert('Kindly fill in some details')
+      async toggleReminder(id) {
+        const task = this.tasks.find(t => t.id === id)
+        task.reminder = !task.reminder
+        const res= await api.put(`tasks/${id}`,{reminder:task.reminder})
+        if (res.error) {
+          console.log(res.error)
         }
-        if(!day){
-          alert('Kindly fill in some details')
-        }
-        const newTask={
-          text : text,
-          day : day,
-          reminder :reminder ===true?1:0,
-        }
-        console.log(newTask)
-       const data =await api.post('tasks',newTask)
-
-       this.tasks=[...this.tasks,data]
-       this.text=ref(null)
-       this.day=ref(null)
-       this.reminder=0
       },
   },
   persist: true,
