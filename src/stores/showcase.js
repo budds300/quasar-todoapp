@@ -64,13 +64,11 @@ export const useCounterStore = defineStore("counter", {
     async registerUser(name, email, password, password_confirmation) {
       try {
         const task = api
-          .post("auth/register", {
-            name,
-            email,
-            password,
-            password_confirmation,
-          })
-          .then((res) => console.log(res.message));
+          .post("auth/register", {name:name,
+            email:email,
+            password:password,
+            password_confirmation:password_confirmation,
+          });
         console.log(task);
       } catch (error) {
         if (error) throw error;
@@ -81,7 +79,7 @@ export const useCounterStore = defineStore("counter", {
       try {
         await api.post("auth/logout");
         this.clearUser();
-        
+
       } catch (error) {
         if (error) throw error;
       }
