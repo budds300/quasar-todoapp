@@ -123,11 +123,11 @@ export default {
       else{
           try {
           await userStore.addTask({text:this.text,day:this.day,reminder:this.reminder,});
-          this.$q.notify({
-            color: "green-4",
-            textColor: "white",
-            icon: "cloud_done",
-            message: "Task added",
+        this.$q.notify({
+          color: "green-4",
+          textColor: "white",
+          icon: "cloud_done",
+          message: "Task added",
           });
             this.text=""
            this.day=""

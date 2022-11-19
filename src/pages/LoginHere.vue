@@ -16,7 +16,7 @@
           <q-card-actions class="q-px-md">
           </q-card-actions>
           <q-card-section class="text-center q-pa-none">
-            <a class="text-blue-9" href="#/auth/register">Not reigistered? Created an Account</a>
+            <a class="text-blue-9" href="/auth/register/">Not reigistered? Created an Account</a>
           </q-card-section>
         </q-card>
       </div>
@@ -69,31 +69,6 @@ export default {
     })
   }
 
-    // .then (error => { console.log(error)
-          //   if (res.data.status === "Error") {
-          //     $q.notify({
-          //       type: "negative",
-          //       message: "Incorrect Data!",
-          //     });
-          //   } else {
-          //     this.$router.push({ path: "/" }); // << router is an object, not a function
-          //   }
-          // },
-          // (error) =>
-          //   this.$q.notify({
-          //     type: "negative",
-          //     message: error.response.data.message,
-          //   })
-            // )
-
-
-    // get user
-
-    // const user = await userStore.fetchUser()
-    // console.log(user)
-    //set data in local storeage
-      // userStore.setUser(user.data)
-
 
   }
 }
@@ -105,4 +80,3 @@ export default {
   width: 360px;
 }
 </style>
-  

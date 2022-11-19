@@ -2,9 +2,7 @@ import { defineStore } from "pinia";
 import { useQuasar } from "quasar";
 import { store } from "quasar/wrappers";
 import { useRouter } from "vue-router";
-import { api } from "../boot/axios"
-
-
+import { api } from "../boot/axios";
 
 const router = useRouter();
 const $q = useQuasar();
@@ -18,7 +16,7 @@ export const useCounterStore = defineStore("counter", {
     password_confirmation: null,
     user: null,
     token: localStorage.getItem("token") || 0,
-    tasks:[]
+    tasks: [],
   }),
 
   getters: {
@@ -31,7 +29,10 @@ export const useCounterStore = defineStore("counter", {
 
   actions: {
     setToken(payload) {
-      const localstore =localStorage.setItem("token", payload.data.access_token);
+      const localstore = localStorage.setItem(
+        "token",
+        payload.data.access_token
+      );
       this.token = token;
     },
     removeToken() {
@@ -46,19 +47,18 @@ export const useCounterStore = defineStore("counter", {
       }
     },
     async login(email, password) {
-      console.log("clicked")
+      console.log("clicked");
       try {
-        await api.post("auth/login", { email: email, password: password })
-
+        await api.post("auth/login", { email: email, password: password });
       } catch (error) {
         if (error) throw error;
       }
     },
     async fetchUser() {
       try {
-        return await api.get('/user')
+        return await api.get("/user");
       } catch (error) {
-        if (error) throw error
+        if (error) throw error;
       }
     },
     async registerUser(name, email, password, password_confirmation) {
@@ -81,53 +81,49 @@ export const useCounterStore = defineStore("counter", {
       try {
         await api.post("auth/logout");
         this.clearUser();
+        
       } catch (error) {
         if (error) throw error;
       }
     },
     async logOut() {
       try {
-        await api.post("auth/logout").then(res =>{
-
-        })
-
+        await api.post("auth/logout").then((res) => {});
       } catch (error) {
         if (error) throw error;
       }
     },
     setUser(payload) {
+      if (payload.data.id) this.id = payload.data.id;
       if (payload.data.email) this.email = payload.data.email;
-      console.log( payload.data);
+      console.log(payload.data);
     },
-
 
     clearUser() {
       this.name = null;
       this.email = null;
     },
-    async fetchTasks(){
-     const currentTasks= await api.get("tasks").then(res=>res.data.data)
-     this.tasks = currentTasks
-      },
-      async addTask(task){
-        this.tasks=[task,...this.tasks]
-        await api.post('tasks',task)
+    async fetchTasks() {
+      const currentTasks = await api.get("tasks").then((res) => res.data.data);
+      this.tasks = currentTasks;
+    },
+    async addTask(task) {
+      this.tasks = [task, ...this.tasks];
+      await api.post("tasks", task);
+    },
+    async deleteTask(id) {
+      await api.delete(`tasks/${id}`);
+    },
 
-        }
-      ,
-      async deleteTask(id) {
-         await api.delete(`tasks/${id}`);
-
-      },
-
-      async toggleReminder(id) {
-        const task = this.tasks.find(t => t.id === id)
-        task.reminder = !task.reminder
-        const res= await api.put(`tasks/${id}`,{reminder:task.reminder})
-        if (res.error) {
-          console.log(res.error)
-        }
-      },
+    async toggleReminder(id) {
+      const task = this.tasks.find((t) => t.id === id);
+      const newReminder= task.reminder = !task.reminder;
+      const newTask = { text: task.text,day:task.day,reminder:newReminder};
+      const res = await api.put(`tasks/${id}`, newTask);
+      if (res.error) {
+        console.log(res.error);
+      }
+    },
   },
   persist: true,
 });

@@ -58,6 +58,20 @@
                 Help
               </q-item-section>
             </q-item>
+            <q-item
+
+              clickable
+              v-ripple
+              @click="logout"
+              exact>
+              <q-item-section avatar>
+                <q-icon name="logout" />
+              </q-item-section>
+
+              <q-item-section>
+                Logout
+              </q-item-section>
+            </q-item>
 
 
           </q-list>
@@ -86,8 +100,10 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import {date} from 'quasar'
+import { useCounterStore } from 'src/stores/showcase'
+import { route } from 'quasar/wrappers'
 // import EssentialLink from 'components/EssentialLink.vue'
-
+const useStore=useCounterStore()
 const linksList = [
   {
     title: 'Docs',
@@ -154,6 +170,15 @@ export default defineComponent({
     todaysDate(){
       let timeStamp=Date.now()
       return date.formatDate(timeStamp,'dddd D MMMM')
+    }
+  },
+  methods:{
+   async logout(){
+      await useStore.logOut()
+      const users = await useStore.fetchUser()
+      console.log(users)
+      useStore.clearUser(users)
+      route.push('/auth/login')
     }
   }
 

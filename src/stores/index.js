@@ -1,6 +1,6 @@
 import { store } from 'quasar/wrappers'
 import { createPinia } from 'pinia'
-import {useCounterStore} from './showcase'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 /*
 * If not building with SSR mode, you can
@@ -12,11 +12,8 @@ import {useCounterStore} from './showcase'
  */
 
 export default store((/* { ssrContext } */) => {
-  const pinia = createPinia(
-  //   {
-  //   modules:{useCounterStore}
-  // }
-  )
+  const pinia = createPinia( )
+  pinia.use(piniaPluginPersistedstate)
 
   // You can add Pinia plugins here
   // pinia.use(SomePiniaPlugin)

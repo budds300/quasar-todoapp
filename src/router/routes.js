@@ -21,11 +21,7 @@ const routes = [
         component: () => import("pages/HelpPage.vue"),
         meta: { requiresAuth: true },
       },
-      { path: "/login", component: () => import("src/pages/LoginHere.vue") },
-      {
-        path: "/register",
-        component: () => import("src/pages/RegisterHere.vue"),
-      },
+
     ],
   },
   {
