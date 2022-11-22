@@ -100,6 +100,10 @@ export const useCounterStore = defineStore("counter", {
     clearUser() {
       this.name = null;
       this.email = null;
+      this.id=null
+      this.tasks=[]
+     
+
     },
     async fetchTasks() {
       const currentTasks = await api.get("tasks").then((res) => res.data.data);
