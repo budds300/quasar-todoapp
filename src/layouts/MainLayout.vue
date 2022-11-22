@@ -102,6 +102,8 @@ import { defineComponent, ref } from 'vue'
 import {date} from 'quasar'
 import { useCounterStore } from 'src/stores/showcase'
 import { route } from 'quasar/wrappers'
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 // import EssentialLink from 'components/EssentialLink.vue'
 const useStore=useCounterStore()
 const linksList = [
@@ -157,6 +159,8 @@ export default defineComponent({
   },
 
   setup () {
+    const $router = useRouter()
+    const $q = useQuasar();
     const leftDrawerOpen = ref(false)
 
     return {
@@ -174,11 +178,16 @@ export default defineComponent({
   },
   methods:{
    async logout(){
+     const users = await useStore.fetchUser()
       await useStore.logOut()
-      const users = await useStore.fetchUser()
-      console.log(users)
       useStore.clearUser(users)
-      route.push('/auth/login')
+      this.$q.notify({
+          color: "green-4",
+          textColor: "white",
+          icon: "cloud_done",
+          message: "You have Successfully Logged Out",
+        });
+     this.$router.push('/auth/login')
     }
   }
 

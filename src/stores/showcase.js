@@ -63,13 +63,8 @@ export const useCounterStore = defineStore("counter", {
     },
     async registerUser(name, email, password, password_confirmation) {
       try {
-        const task = api
-          .post("auth/register", {name:name,
-            email:email,
-            password:password,
-            password_confirmation:password_confirmation,
-          });
-        console.log(task);
+       await api.post("auth/register", {name:name,email:email,password:password,password_confirmation:password_confirmation});
+
       } catch (error) {
         if (error) throw error;
       }
@@ -86,7 +81,7 @@ export const useCounterStore = defineStore("counter", {
     },
     async logOut() {
       try {
-        await api.post("auth/logout").then((res) => {});
+        await api.post("auth/logout");
       } catch (error) {
         if (error) throw error;
       }
@@ -95,6 +90,11 @@ export const useCounterStore = defineStore("counter", {
       if (payload.data.id) this.id = payload.data.id;
       if (payload.data.email) this.email = payload.data.email;
       console.log(payload.data);
+    },
+    setTask(payload) {
+      if (payload.data.reminder) this.reminder = payload.data.reminder;
+      console.log(payload.data);
+
     },
 
     clearUser() {
@@ -115,9 +115,17 @@ export const useCounterStore = defineStore("counter", {
 
     async toggleReminder(id) {
       const task = this.tasks.find((t) => t.id === id);
-      const newReminder= task.reminder = !task.reminder;
-      const newTask = { text: task.text,day:task.day,reminder:newReminder};
-      const res = await api.put(`tasks/${id}`, newTask);
+      if(task.reminder ===0){
+        task.reminder=1
+      }
+      else if (task.reminder===1){
+        task.reminder=0
+      }
+      console.log(task.reminder)
+
+      // console.log("" + task.reminder)
+      const res = await api.patch(`tasks/${id}`, {text: task.text,day:task.day,reminder:task.reminder});
+      console.log(res.data.data)
       if (res.error) {
         console.log(res.error);
       }

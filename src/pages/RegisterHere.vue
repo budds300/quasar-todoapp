@@ -21,6 +21,9 @@
                 stack-lable
                 type="name"
                 placeholder="Name"
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                ]"
               />
               <q-input
                 square
@@ -30,6 +33,7 @@
                 stack-lable
                 type="email"
                 placeholder="Email"
+                :rules="[(val) => !!val || 'Email is missing', isValidEmail()]"
               />
               <q-input
                 square
@@ -39,6 +43,10 @@
                 stack-lable
                 type="password"
                 placeholder="Password"
+                :rules="[
+                  (val) =>
+                    (val && val.length > 0) || 'Kindly fill in your Password',
+                ]"
               />
               <q-input
                 square
@@ -48,6 +56,9 @@
                 stack-lable
                 type="password"
                 placeholder="Confirm Password"
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                ]"
               />
               <q-btn
                 unelevated
@@ -77,46 +88,56 @@ import { useQuasar } from "quasar";
 import { useCounterStore } from "../stores/showcase";
 import { useRouter } from "vue-router";
 
-
-
 const userStore = useCounterStore();
 
 export default {
   // name: 'Login'/,
 
   data() {
-    const $router = useRouter()
-    const $q = useQuasar()
+    const $router = useRouter();
+    const $q = useQuasar();
     return {
       // csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-      name: ref(""),
-      email: ref(""),
-      password: ref(""),
-      password_confirmation: ref(""),
+      name: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
     };
   },
   methods: {
+    isValidEmail() {
+      const emailPattern =
+        /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(this.email) || "Invalid email";
+    },
     // ...mapActions(['signUp']),
-    async onSubmit(){
+    async onSubmit() {
       try {
-    // Get the tokens/cookies
-
-    await userStore.getSanctumCookie()
-    // Login user
-    await userStore.registerUser(this.email, this.password)
-    
-    this.$router.push('/')
+        // Get the tokens/cookies
+        await userStore.getSanctumCookie();
+        // register user
+        await userStore.registerUser(
+          this.name,
+          this.email,
+          this.password,
+          this.password_confirmation
+        );
+        this.$q.notify({
+          color: "green-4",
+          textColor: "white",
+          icon: "cloud_done",
+          message: "Registration Successfull",
+        });
+        this.$router.push("/auth/login");
+      } catch (error) {
+        this.$q.dialog({
+          title: "Registration failed",
+          message:
+            "Your Registration was unsuccessful. Please make sure that your details are correct.",
+          persistent: true,
+        });
       }
-      catch(error){
-    this.$q.dialog({
-      title: 'Login failed',
-      message: 'Your login was unsuccessful. Please make sure that your details are correct.',
-      persistent: true
-    })
-  }
-
-
-  }
+    },
   },
 };
 </script>
